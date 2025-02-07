@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <%- include('../partials/head') %>
+    <title>Özel Gün Yönetimi | Uni-Dash</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+</head>
+<body>
+    <%- include('../partials/nav') %>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Özel Gün Yönetimi</h2>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSpecialDayModal">
+                <i class="fas fa-plus"></i> Yeni Özel Gün
+            </button>
+        </div>
+
+        <div class="row">
+            <% specialDays.forEach(function(day) { %>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas <%= day.icon %> fa-2x me-3" style="color: <%= day.color %>"></i>
+                                <h5 class="card-title mb-0"><%= day.name %></h5>
+                            </div>
+                            <p class="card-text">
+                                <small class="text-muted">Tarih: <%= day.date %></small>
+                            </p>
+                            <div class="d-flex justify-content-end">
+                                <button type="button" class="btn btn-sm btn-outline-primary me-2" 
+                                        onclick="editSpecialDay('<%= day._id %>', '<%= day.name %>', '<%= day.date %>', '<%= day.icon %>', '<%= day.color %>')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-danger" 
+                                        onclick="deleteSpecialDay('<%= day._id %>')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+
+    <!-- Add Special Day Modal -->
+    <div class="modal fade" id="addSpecialDayModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Yeni Özel Gün</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addSpecialDayForm">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Özel Gün Adı</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Tarih (GG-AA)</label>
+                            <input type="text" class="form-control" id="date" name="date" 
+                                   pattern="[0-9]{2}-[0-9]{2}" placeholder="01-01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="icon" class="form-label">İkon</label>
+                            <div class="icon-grid">
+                                <h6 class="mt-2 mb-2">Kutlama & Özel Günler</h6>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon1" value="fa-gift" required>
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon1" title="Hediye">
+                                            <i class="fas fa-gift"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon2" value="fa-birthday-cake">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon2" title="Doğum Günü">
+                                            <i class="fas fa-birthday-cake"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon3" value="fa-star">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon3" title="Yıldız">
+                                            <i class="fas fa-star"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon4" value="fa-heart">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon4" title="Kalp">
+                                            <i class="fas fa-heart"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon5" value="fa-award">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon5" title="Ödül">
+                                            <i class="fas fa-award"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon6" value="fa-crown">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon6" title="Taç">
+                                            <i class="fas fa-crown"></i>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h6 class="mt-3 mb-2">Mevsimler & Doğa</h6>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon7" value="fa-sun">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon7" title="Güneş">
+                                            <i class="fas fa-sun"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon8" value="fa-snowflake">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon8" title="Kar">
+                                            <i class="fas fa-snowflake"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon9" value="fa-leaf">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon9" title="Yaprak">
+                                            <i class="fas fa-leaf"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon10" value="fa-tree">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon10" title="Ağaç">
+                                            <i class="fas fa-tree"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon11" value="fa-cloud-sun">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon11" title="Bulutlu">
+                                            <i class="fas fa-cloud-sun"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon12" value="fa-rainbow">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon12" title="Gökkuşağı">
+                                            <i class="fas fa-rainbow"></i>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h6 class="mt-3 mb-2">Milli & Resmi</h6>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon13" value="fa-flag">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon13" title="Bayrak">
+                                            <i class="fas fa-flag"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon14" value="fa-monument">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon14" title="Anıt">
+                                            <i class="fas fa-monument"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon15" value="fa-landmark">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon15" title="Tarihi Yapı">
+                                            <i class="fas fa-landmark"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon16" value="fa-dove">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon16" title="Barış">
+                                            <i class="fas fa-dove"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon17" value="fa-balance-scale">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon17" title="Adalet">
+                                            <i class="fas fa-balance-scale"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon18" value="fa-gavel">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon18" title="Hukuk">
+                                            <i class="fas fa-gavel"></i>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h6 class="mt-3 mb-2">Eğitim & Kariyer</h6>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon19" value="fa-graduation-cap">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon19" title="Mezuniyet">
+                                            <i class="fas fa-graduation-cap"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon20" value="fa-book">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon20" title="Kitap">
+                                            <i class="fas fa-book"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon21" value="fa-user-graduate">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon21" title="Öğrenci">
+                                            <i class="fas fa-user-graduate"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon22" value="fa-chalkboard-teacher">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon22" title="Öğretmen">
+                                            <i class="fas fa-chalkboard-teacher"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon23" value="fa-microscope">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon23" title="Bilim">
+                                            <i class="fas fa-microscope"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon24" value="fa-atom">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon24" title="Atom">
+                                            <i class="fas fa-atom"></i>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h6 class="mt-3 mb-2">Sağlık & Spor</h6>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon25" value="fa-heartbeat">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon25" title="Sağlık">
+                                            <i class="fas fa-heartbeat"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon26" value="fa-stethoscope">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon26" title="Tıp">
+                                            <i class="fas fa-stethoscope"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon27" value="fa-running">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon27" title="Spor">
+                                            <i class="fas fa-running"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon28" value="fa-medal">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon28" title="Madalya">
+                                            <i class="fas fa-medal"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon29" value="fa-dumbbell">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon29" title="Fitness">
+                                            <i class="fas fa-dumbbell"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon30" value="fa-trophy">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon30" title="Kupa">
+                                            <i class="fas fa-trophy"></i>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h6 class="mt-3 mb-2">Anma & Saygı</h6>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon37" value="fa-pray">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon37" title="Dua">
+                                            <i class="fas fa-pray"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon38" value="fa-seedling">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon38" title="Fidan">
+                                            <i class="fas fa-seedling"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon39" value="fa-peace">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon39" title="Barış">
+                                            <i class="fas fa-peace"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon40" value="fa-fire-flame-curved">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon40" title="Meşale">
+                                            <i class="fas fa-fire-flame-curved"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon41" value="fa-ribbon">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon41" title="Kurdele">
+                                            <i class="fas fa-ribbon"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon42" value="fa-bell">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon42" title="Çan">
+                                            <i class="fas fa-bell"></i>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h6 class="mt-3 mb-2">Çiçekler & Bitkiler</h6>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon43" value="fa-fan">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon43" title="Çiçek">
+                                            <i class="fas fa-fan"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon44" value="fa-pagelines">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon44" title="Yaprak">
+                                            <i class="fab fa-pagelines"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon45" value="fa-canadian-maple-leaf">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon45" title="Akçaağaç Yaprağı">
+                                            <i class="fab fa-canadian-maple-leaf"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon46" value="fa-spa">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon46" title="Çiçek">
+                                            <i class="fas fa-spa"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon47" value="fa-clover">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon47" title="Yonca">
+                                            <i class="fas fa-clover"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon48" value="fa-envira">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon48" title="Bitki">
+                                            <i class="fab fa-envira"></i>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h6 class="mt-3 mb-2">Diğer</h6>
+                                <div class="row g-2">
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon31" value="fa-hands-helping">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon31" title="Yardımlaşma">
+                                            <i class="fas fa-hands-helping"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon32" value="fa-globe">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon32" title="Dünya">
+                                            <i class="fas fa-globe"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon33" value="fa-theater-masks">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon33" title="Sanat">
+                                            <i class="fas fa-theater-masks"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon34" value="fa-music">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon34" title="Müzik">
+                                            <i class="fas fa-music"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon35" value="fa-palette">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon35" title="Resim">
+                                            <i class="fas fa-palette"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="icon" id="icon36" value="fa-camera">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="icon36" title="Fotoğraf">
+                                            <i class="fas fa-camera"></i>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="color" class="form-label">Renk</label>
+                            <input type="color" class="form-control" id="color" name="color" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" onclick="addSpecialDay()">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Special Day Modal -->
+    <div class="modal fade" id="editSpecialDayModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Özel Gün Düzenle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editSpecialDayForm">
+                        <input type="hidden" id="editId">
+                        <div class="mb-3">
+                            <label for="editName" class="form-label">Özel Gün Adı</label>
+                            <input type="text" class="form-control" id="editName" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDate" class="form-label">Tarih (GG-AA)</label>
+                            <input type="text" class="form-control" id="editDate" name="date" 
+                                   pattern="[0-9]{2}-[0-9]{2}" placeholder="01-01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editIcon" class="form-label">İkon</label>
+                            <div class="icon-grid">
+                                <h6 class="mt-2 mb-2">Kutlama & Özel Günler</h6>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon1" value="fa-gift">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon1" title="Hediye">
+                                            <i class="fas fa-gift"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon2" value="fa-birthday-cake">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon2" title="Doğum Günü">
+                                            <i class="fas fa-birthday-cake"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon3" value="fa-star">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon3" title="Yıldız">
+                                            <i class="fas fa-star"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon4" value="fa-heart">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon4" title="Kalp">
+                                            <i class="fas fa-heart"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon5" value="fa-award">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon5" title="Ödül">
+                                            <i class="fas fa-award"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon6" value="fa-crown">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon6" title="Taç">
+                                            <i class="fas fa-crown"></i>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h6 class="mt-3 mb-2">Mevsimler & Doğa</h6>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon7" value="fa-sun">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon7" title="Güneş">
+                                            <i class="fas fa-sun"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon8" value="fa-snowflake">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon8" title="Kar">
+                                            <i class="fas fa-snowflake"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon9" value="fa-leaf">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon9" title="Yaprak">
+                                            <i class="fas fa-leaf"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon10" value="fa-tree">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon10" title="Ağaç">
+                                            <i class="fas fa-tree"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon11" value="fa-cloud-sun">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon11" title="Bulutlu">
+                                            <i class="fas fa-cloud-sun"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon12" value="fa-rainbow">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon12" title="Gökkuşağı">
+                                            <i class="fas fa-rainbow"></i>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h6 class="mt-3 mb-2">Milli & Resmi</h6>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon13" value="fa-flag">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon13" title="Bayrak">
+                                            <i class="fas fa-flag"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon14" value="fa-monument">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon14" title="Anıt">
+                                            <i class="fas fa-monument"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon15" value="fa-landmark">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon15" title="Tarihi Yapı">
+                                            <i class="fas fa-landmark"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon16" value="fa-dove">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon16" title="Barış">
+                                            <i class="fas fa-dove"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon17" value="fa-balance-scale">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon17" title="Adalet">
+                                            <i class="fas fa-balance-scale"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon18" value="fa-gavel">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon18" title="Hukuk">
+                                            <i class="fas fa-gavel"></i>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h6 class="mt-3 mb-2">Eğitim & Kariyer</h6>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon19" value="fa-graduation-cap">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon19" title="Mezuniyet">
+                                            <i class="fas fa-graduation-cap"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon20" value="fa-book">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon20" title="Kitap">
+                                            <i class="fas fa-book"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon21" value="fa-user-graduate">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon21" title="Öğrenci">
+                                            <i class="fas fa-user-graduate"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon22" value="fa-chalkboard-teacher">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon22" title="Öğretmen">
+                                            <i class="fas fa-chalkboard-teacher"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon23" value="fa-microscope">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon23" title="Bilim">
+                                            <i class="fas fa-microscope"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon24" value="fa-atom">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon24" title="Atom">
+                                            <i class="fas fa-atom"></i>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h6 class="mt-3 mb-2">Sağlık & Spor</h6>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon25" value="fa-heartbeat">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon25" title="Sağlık">
+                                            <i class="fas fa-heartbeat"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon26" value="fa-stethoscope">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon26" title="Tıp">
+                                            <i class="fas fa-stethoscope"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon27" value="fa-running">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon27" title="Spor">
+                                            <i class="fas fa-running"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon28" value="fa-medal">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon28" title="Madalya">
+                                            <i class="fas fa-medal"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon29" value="fa-dumbbell">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon29" title="Fitness">
+                                            <i class="fas fa-dumbbell"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon30" value="fa-trophy">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon30" title="Kupa">
+                                            <i class="fas fa-trophy"></i>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h6 class="mt-3 mb-2">Anma & Saygı</h6>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon31" value="fa-pray">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon31" title="Dua">
+                                            <i class="fas fa-pray"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon32" value="fa-seedling">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon32" title="Fidan">
+                                            <i class="fas fa-seedling"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon33" value="fa-peace">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon33" title="Barış">
+                                            <i class="fas fa-peace"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon34" value="fa-fire-flame-curved">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon34" title="Meşale">
+                                            <i class="fas fa-fire-flame-curved"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon35" value="fa-ribbon">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon35" title="Kurdele">
+                                            <i class="fas fa-ribbon"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon36" value="fa-bell">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon36" title="Çan">
+                                            <i class="fas fa-bell"></i>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h6 class="mt-3 mb-2">Çiçekler & Bitkiler</h6>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon37" value="fa-fan">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon37" title="Çiçek">
+                                            <i class="fas fa-fan"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon38" value="fa-pagelines">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon38" title="Yaprak">
+                                            <i class="fab fa-pagelines"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon39" value="fa-canadian-maple-leaf">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon39" title="Akçaağaç Yaprağı">
+                                            <i class="fab fa-canadian-maple-leaf"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon40" value="fa-spa">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon40" title="Çiçek">
+                                            <i class="fas fa-spa"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon41" value="fa-clover">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon41" title="Yonca">
+                                            <i class="fas fa-clover"></i>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="radio" class="btn-check" name="editIcon" id="editIcon42" value="fa-envira">
+                                        <label class="btn btn-outline-primary w-100 p-2" for="editIcon42" title="Bitki">
+                                            <i class="fab fa-envira"></i>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editColor" class="form-label">Renk</label>
+                            <input type="color" class="form-control" id="editColor" name="color" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" onclick="updateSpecialDay()">Güncelle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .icon-grid .btn {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .icon-grid .btn i {
+            font-size: 1.2rem;
+        }
+        .btn-check:checked + .btn {
+            background-color: var(--bs-primary);
+            color: white;
+        }
+    </style>
+
+    <script>
+        // Add new special day
+        async function addSpecialDay() {
+            const name = document.getElementById('name').value;
+            const date = document.getElementById('date').value;
+            const icon = document.querySelector('input[name="icon"]:checked').value;
+            const color = document.getElementById('color').value;
+
+            try {
+                const response = await apiRequest('/api/special-days', {
+                    method: 'POST',
+                    body: JSON.stringify({ name, date, icon, color })
+                });
+
+                if (response && response.ok) {
+                    location.reload();
+                } else {
+                    alert('Özel gün eklenirken bir hata oluştu');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Özel gün eklenirken bir hata oluştu');
+            }
+        }
+
+        // Edit special day
+        function editSpecialDay(id, name, date, icon, color) {
+            document.getElementById('editId').value = id;
+            document.getElementById('editName').value = name;
+            document.getElementById('editDate').value = date;
+            document.querySelector(`input[name="editIcon"][value="${icon}"]`).checked = true;
+            document.getElementById('editColor').value = color;
+            
+            new bootstrap.Modal(document.getElementById('editSpecialDayModal')).show();
+        }
+
+        // Update special day
+        async function updateSpecialDay() {
+            const id = document.getElementById('editId').value;
+            const name = document.getElementById('editName').value;
+            const date = document.getElementById('editDate').value;
+            const icon = document.querySelector('input[name="editIcon"]:checked').value;
+            const color = document.getElementById('editColor').value;
+
+            try {
+                const response = await apiRequest(`/api/special-days/${id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ name, date, icon, color })
+                });
+
+                if (response && response.ok) {
+                    location.reload();
+                } else {
+                    alert('Özel gün güncellenirken bir hata oluştu');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Özel gün güncellenirken bir hata oluştu');
+            }
+        }
+
+        // Delete special day
+        async function deleteSpecialDay(id) {
+            if (confirm('Bu özel günü silmek istediğinizden emin misiniz?')) {
+                try {
+                    const response = await apiRequest(`/api/special-days/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response && response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Özel gün silinirken bir hata oluştu');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Özel gün silinirken bir hata oluştu');
+                }
+            }
+        }
+    </script>
+</body>
+</html> 

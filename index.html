@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uni-Dash | Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/svg+xml" href="images/logo.svg">
+</head>
+<body>
+    <div class="logo-container">
+        <a href="https://www.uniteks.com.tr">
+            <img src="./images/logo-full.svg" alt="Logo" class="main-logo">
+        </a>
+    </div>
+
+    <div class="container">
+        <!-- Sol Bölüm - Saat, Tarih ve Hava Durumu -->
+        <div class="left-section">
+            <div class="card time-date-card animate-fade-in">
+                <div class="time" id="current-time">15:45</div>
+                <div class="date" id="current-date">1 Mart 2024</div>
+                <div class="day" id="current-day">Cuma</div>
+            </div>
+
+            <div class="card weather-card animate-slide-up">
+                <div class="weather-icon" id="weather-icon">
+                    <i class="fas fa-sun"></i>
+                </div>
+                <div class="weather-info">
+                    <div class="temperature" id="weather-temp">Yükleniyor...</div>
+                    <div class="location" id="weather-location">İzmir</div>
+                    <div class="description" id="weather-desc">Yükleniyor...</div>
+                </div>
+            </div>
+
+            <div class="card currency-card animate-slide-up">
+                <div class="currency-item">
+                    <i class="fas fa-dollar-sign"></i>
+                    <div class="rate">
+                        <span class="label">USD/TRY</span>
+                        <span class="value" id="usd-try">Yükleniyor...</span>
+                        <span class="change" id="usd-try-change"></span>
+                    </div>
+                </div>
+                <div class="currency-item">
+                    <i class="fas fa-euro-sign"></i>
+                    <div class="rate">
+                        <span class="label">EUR/TRY</span>
+                        <span class="value" id="eur-try">Yükleniyor...</span>
+                        <span class="change" id="eur-try-change"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orta Bölüm - Uygulamalar ve Duyurular -->
+        <div class="middle-section">
+            <div class="card announcements-card animate-slide-right">
+                <h2><i class="fas fa-bullhorn"></i> Duyurular</h2>
+                <div class="announcement-list" id="announcement-list">
+                    <!-- Duyurular buraya dinamik olarak eklenecek -->
+                </div>
+            </div>
+
+            <div class="apps-grid" id="apps-grid">
+                <!-- Siteler buraya dinamik olarak eklenecek -->
+            </div>
+        </div>
+
+        <!-- Sağ Bölüm - Özel Günler ve Quick Links -->
+        <div class="right-section">
+            <div class="card special-day-card animate-slide-left" id="special-day-container" style="display: none;">
+                <div class="special-day-icon">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <div class="special-day-info">
+                    
+                    <h3 id="special-day-name"></h3>
+                    <span class="date" id="special-day-date"></span>
+                </div>
+            </div>
+
+            <div class="card quick-links-card animate-slide-left">
+                <h2><i class="fas fa-link"></i> Hızlı Erişim</h2>
+                <div class="quick-links-list">
+                    <a href="./images/ss2025.pdf" target="_blank" class="quick-link">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>Şirket Politikaları</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openPhoneModal()" class="quick-link">
+                        <i class="fas fa-phone"></i>
+                        <span>Dahili Telefon Rehberi</span>
+                    </a>
+                    <a href="#" class="quick-link">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>İzin Talep</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dahili Telefon Rehberi Modal -->
+    <div class="modal" id="phoneDirectoryModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="background: white; width: 90%; max-width: 600px; margin: 50px auto; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0;"><i class="fas fa-phone"></i> Dahili Telefon Rehberi</h3>
+                <button onclick="closePhoneModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+            <div style="max-height: 400px; overflow-y: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tbody>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">Santral</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">0</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">Yönetim</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">101</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">İnsan Kaynakları</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">102</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">Muhasebe</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">103</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">Bilgi İşlem</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">104</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">Satış</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">105</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">Pazarlama</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">106</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Saat ve Tarih Güncelleme
+        function updateDateTime() {
+            const now = new Date();
+            const timeElement = document.getElementById('current-time');
+            const dateElement = document.getElementById('current-date');
+            const dayElement = document.getElementById('current-day');
+
+            const days = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+            const months = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            timeElement.innerHTML = `${hours}<span class="time-separator">:</span>${minutes}`;
+            
+            dateElement.textContent = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+            dayElement.textContent = days[now.getDay()];
+        }
+
+        // Hava durumu ikonlarını FontAwesome ikonlarına çevir
+        function getWeatherIcon(code) {
+            const icons = {
+                '01d': 'fa-sun',
+                '01n': 'fa-moon',
+                '02d': 'fa-cloud-sun',
+                '02n': 'fa-cloud-moon',
+                '03d': 'fa-cloud',
+                '03n': 'fa-cloud',
+                '04d': 'fa-cloud',
+                '04n': 'fa-cloud',
+                '09d': 'fa-cloud-showers-heavy',
+                '09n': 'fa-cloud-showers-heavy',
+                '10d': 'fa-cloud-rain',
+                '10n': 'fa-cloud-rain',
+                '11d': 'fa-bolt',
+                '11n': 'fa-bolt',
+                '13d': 'fa-snowflake',
+                '13n': 'fa-snowflake',
+                '50d': 'fa-smog',
+                '50n': 'fa-smog'
+            };
+            return icons[code] || 'fa-sun';
+        }
+
+        // Dashboard verilerini çek ve güncelle
+        async function fetchDashboardData() {
+            try {
+                const response = await fetch('http://localhost:3000/api/dashboard');
+                if (!response.ok) {
+                    throw new Error('Dashboard verileri alınamadı');
+                }
+                const data = await response.json();
+
+                // Hava durumu güncelle
+                if (data.weather) {
+                    document.getElementById('weather-temp').textContent = `${Math.round(data.weather.temperature)}°C`;
+                    document.getElementById('weather-location').textContent = data.weather.location;
+                    document.getElementById('weather-desc').textContent = data.weather.condition;
+                    document.getElementById('weather-icon').innerHTML = `<i class="fas ${getWeatherIcon(data.weather.icon)}"></i>`;
+                }
+
+                // Döviz kurları güncelle
+                if (data.currency) {
+                    document.getElementById('usd-try').textContent = data.currency.usdRate.toFixed(4);
+                    document.getElementById('eur-try').textContent = data.currency.eurRate.toFixed(4);
+                    updateCurrencyChangeWithValue('usd-try-change', data.currency.usdChange);
+                    updateCurrencyChangeWithValue('eur-try-change', data.currency.eurChange);
+                }
+
+                // Duyuruları güncelle
+                const announcementList = document.getElementById('announcement-list');
+                announcementList.innerHTML = '';
+                if (data.announcements) {
+                    data.announcements.forEach(announcement => {
+                        const announcementHtml = `
+                            <div class="announcement-item ${announcement.priority ? 'priority' : ''}">
+                                <span class="date">${new Date(announcement.date).toLocaleDateString('tr-TR')}</span>
+                                <p>${announcement.content}</p>
+                            </div>
+                        `;
+                        announcementList.innerHTML += announcementHtml;
+                    });
+                }
+
+                // Siteleri güncelle
+                const appsGrid = document.getElementById('apps-grid');
+                appsGrid.innerHTML = '';
+                if (data.sites) {
+                    data.sites.forEach(site => {
+                        const siteHtml = `
+                            <a href="${site.link}" target="_blank" rel="noopener noreferrer" class="app-card animate-pop-in" style="text-decoration: none;">
+                                <img src="http://localhost:3000/${site.logo}" alt="${site.name}" style="width: 32px; height: 32px; margin-bottom: 1rem;">
+                                <h3 style="text-decoration: none;">${site.name}</h3>
+                            </a>
+                        `;
+                        appsGrid.innerHTML += siteHtml;
+                    });
+                }
+
+                // Özel günü güncelle
+                const specialDayContainer = document.getElementById('special-day-container');
+                if (data.specialDay) {
+                    document.getElementById('special-day-name').textContent = data.specialDay.name;
+                    document.getElementById('special-day-date').textContent = new Date().toLocaleDateString('tr-TR');
+                    document.querySelector('.special-day-icon i').className = `fas ${data.specialDay.icon}`;
+                    specialDayContainer.style.background = `linear-gradient(135deg, ${data.specialDay.color}, ${adjustColor(data.specialDay.color, 20)})`;
+                    specialDayContainer.style.display = 'flex';
+                } else {
+                    specialDayContainer.style.display = 'none';
+                }
+
+            } catch (error) {
+                console.error('Dashboard verileri alınamadı:', error);
+            }
+        }
+
+        // Döviz değişim oranlarını güncelle
+        function updateCurrencyChangeWithValue(elementId, change) {
+            const element = document.getElementById(elementId);
+            if (!isNaN(change)) {
+                element.textContent = change > 0 ? `↑%${change.toFixed(2)}` : `↓%${Math.abs(change).toFixed(2)}`;
+                element.className = 'change ' + (change > 0 ? 'positive' : 'negative');
+            }
+        }
+
+        // Renk tonunu ayarla
+        function adjustColor(color, percent) {
+            const num = parseInt(color.replace('#', ''), 16),
+                amt = Math.round(2.55 * percent),
+                R = (num >> 16) + amt,
+                G = (num >> 8 & 0x00FF) + amt,
+                B = (num & 0x0000FF) + amt;
+            return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+        }
+
+        // Telefon rehberi modal fonksiyonları
+        function openPhoneModal() {
+            document.getElementById('phoneDirectoryModal').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Arka planı scroll edilemez yap
+        }
+
+        function closePhoneModal() {
+            document.getElementById('phoneDirectoryModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Scroll'u geri aç
+        }
+
+        // Modal dışına tıklandığında kapat
+        document.getElementById('phoneDirectoryModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePhoneModal();
+            }
+        });
+
+        // ESC tuşuna basıldığında modalı kapat
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePhoneModal();
+            }
+        });
+
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', () => {
+            // İlk veri yüklemesi
+            updateDateTime();
+            fetchDashboardData();
+
+            // Saat güncellemesi
+            setInterval(updateDateTime, 1000);
+
+            // Dashboard verilerini her 5 dakikada bir güncelle
+            setInterval(fetchDashboardData, 5 * 60 * 1000);
+        });
+    </script>
+</body>
+</html>

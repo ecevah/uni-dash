@@ -1,0 +1,63 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title mb-4 text-center">Hava Durumu Geçmişi</h2>
+          
+          <div class="mb-4">
+            <form class="d-flex justify-content-center align-items-center gap-2" method="GET">
+              <label for="days">Gösterilecek Gün:</label>
+              <select name="days" id="days" class="form-select" style="width: auto;" onchange="this.form.submit()">
+                <option value="1" <%= days == 1 ? 'selected' : '' %>>1 Gün</option>
+                <option value="3" <%= days == 3 ? 'selected' : '' %>>3 Gün</option>
+                <option value="7" <%= days == 7 ? 'selected' : '' %>>7 Gün</option>
+                <option value="14" <%= days == 14 ? 'selected' : '' %>>14 Gün</option>
+                <option value="30" <%= days == 30 ? 'selected' : '' %>>30 Gün</option>
+              </select>
+            </form>
+          </div>
+
+          <% if (weatherHistory && weatherHistory.length > 0) { %>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Tarih</th>
+                    <th>Sıcaklık</th>
+                    <th>Durum</th>
+                    <th>Konum</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% weatherHistory.forEach(record => { %>
+                    <tr>
+                      <td><%= new Date(record.timestamp).toLocaleString('tr-TR') %></td>
+                      <td>
+                        <img src="<%= record.icon %>" alt="<%= record.condition %>" style="width: 24px; height: 24px;">
+                        <%= record.temperature %>°C
+                      </td>
+                      <td><%= record.condition %></td>
+                      <td><%= record.location %></td>
+                    </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          <% } else { %>
+            <p class="text-center text-muted">Geçmiş hava durumu verisi bulunamadı.</p>
+          <% } %>
+        </div>
+      </div>
+      
+      <div class="text-center mt-3">
+        <a href="/api/weather" class="btn btn-primary">Güncel Hava Durumu</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %> 

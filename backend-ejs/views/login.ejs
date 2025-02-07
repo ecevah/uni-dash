@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <%- include('partials/head') %>
+    <title>Giriş Yap | Uni-Dash</title>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .logo img {
+            height: 50px;
+        }
+        .alert {
+            display: none;
+            margin-bottom: 1rem;
+        }
+        .alert.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <img src="/images/logo-full.svg" alt="Logo">
+        </div>
+        <div id="errorAlert" class="alert alert-danger" role="alert"></div>
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="mb-3">
+                <label for="username" class="form-label">Kullanıcı Adı</label>
+                <input type="text" class="form-control" id="username" name="username" required autocomplete="username">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Şifre</label>
+                <input type="password" class="form-control" id="password" name="password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn-primary w-100" id="submitButton">
+                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                <span class="button-text">Giriş Yap</span>
+            </button>
+        </form>
+    </div>
+
+    <script>
+    // Sayfa yüklendiğinde localStorage'ı temizle
+    document.addEventListener('DOMContentLoaded', function() {
+        localStorage.clear();
+    });
+
+    async function handleLogin(event) {
+        event.preventDefault();
+        
+        const form = event.target;
+        const username = form.username.value.trim();
+        const password = form.password.value;
+        const errorAlert = document.getElementById('errorAlert');
+        const submitButton = form.querySelector('button[type="submit"]');
+        const spinner = submitButton.querySelector('.spinner-border');
+        const buttonText = submitButton.querySelector('.button-text');
+        
+        // Validasyon
+        if (!username || !password) {
+            errorAlert.textContent = 'Lütfen tüm alanları doldurun';
+            errorAlert.classList.add('show');
+            return;
+        }
+
+        try {
+            // Loading durumunu göster
+            submitButton.disabled = true;
+            spinner.classList.remove('d-none');
+            buttonText.textContent = 'Giriş Yapılıyor...';
+            errorAlert.classList.remove('show');
+
+            // Login isteği
+            const response = await fetch('/api/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await response.json();
+            console.log(data);
+            console.log(response);
+            if (!response.ok) {
+                throw new Error(data.message || 'Giriş yapılırken bir hata oluştu');
+            }
+        
+            // Token'ı kaydet
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify({
+                id: data._id,
+                name: data.name,
+                surname: data.surname,
+                username: data.username
+            }));
+
+            // Admin sayfasına yönlendir
+            window.location.replace('/admin');
+
+        } catch (error) {
+            console.error('Login error:', error);
+            errorAlert.textContent = error.message;
+            errorAlert.classList.add('show');
+            localStorage.clear();
+        } finally {
+            // Loading durumunu kaldır
+            submitButton.disabled = false;
+            spinner.classList.add('d-none');
+            buttonText.textContent = 'Giriş Yap';
+        }
+    }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,108 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/admin">
+            <img src="/images/logo.svg" alt="Logo" height="30">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link <%= path === '/admin' ? 'active' : '' %>" href="/admin">Ana Sayfa</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <%= path === '/admin/announcements' ? 'active' : '' %>" href="/admin/announcements">Duyurular</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <%= path === '/admin/special-days' ? 'active' : '' %>" href="/admin/special-days">Özel Günler</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <%= path === '/admin/sites' ? 'active' : '' %>" href="/admin/sites">Siteler</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/auth/login">Çıkış Yap</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<script>
+// Sayfa yüklendiğinde token kontrolü yap
+
+// Linkleri token ile güncelle
+function updateLinksWithToken() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    // Fetch isteklerini otomatik olarak token ile yap
+    const originalFetch = window.fetch;
+    window.fetch = function() {
+        let [resource, config] = arguments;
+        if (!config) {
+            config = {};
+        }
+        if (!config.headers) {
+            config.headers = {};
+        }
+        config.headers['Authorization'] = `Bearer ${token}`;
+        return originalFetch(resource, config);
+    };
+}
+
+// Sayfa yönlendirmesi
+async function navigateTo(url, event) {
+    event.preventDefault();
+    const token = localStorage.getItem('token');
+    
+    try {
+        const response = await fetch(url, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response.redirected) {
+            window.location.href = response.url;
+        } else if (response.ok) {
+            window.location.href = url;
+        } else {
+            
+        }
+    } catch (error) {
+        console.error('Navigation error:', error);
+        
+    }
+}
+
+// Çıkış yapma fonksiyonu
+async function handleLogout() {
+    try {
+        const response = await apiRequest('/api/users/logout', {
+            method: 'POST'
+        });
+
+        if (response.ok) {
+            localStorage.clear();
+            window.location.href = '/auth/login';
+        } else {
+            alert('Çıkış yapılırken bir hata oluştu');
+        }
+    } catch (error) {
+        console.error('Logout error:', error);
+        alert('Çıkış yapılırken bir hata oluştu');
+    }
+}
+
+// Kullanıcı bilgilerini göster
+document.addEventListener('DOMContentLoaded', function() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const userNameElement = document.getElementById('userName');
+    if (userNameElement && user.name) {
+        userNameElement.textContent = `${user.name} ${user.surname}`;
+    }
+});
+</script> 

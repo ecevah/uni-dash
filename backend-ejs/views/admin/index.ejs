@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <%- include('../partials/head') %>
+    <title>Admin Panel | Uni-Dash</title>
+    <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+</head>
+<body>
+    <%- include('../partials/nav') %>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Duyurular</h5>
+                        <p class="card-text">Toplam: <%= stats.announcements %></p>
+                        <a href="/admin/announcements" class="btn btn-primary">Yönet</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Özel Günler</h5>
+                        <p class="card-text">Toplam: <%= stats.specialDays %></p>
+                        <a href="/admin/special-days" class="btn btn-primary">Yönet</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Siteler</h5>
+                        <p class="card-text">Toplam: <%= stats.sites %></p>
+                        <a href="/admin/sites" class="btn btn-primary">Yönet</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Son Duyurular</h5>
+                        <ul class="list-group">
+                            <% recentAnnouncements.forEach(function(announcement) { %>
+                                <li class="list-group-item">
+                                    <%= announcement.content %>
+                                    <% if (announcement.priority) { %>
+                                        <span class="badge bg-danger">Öncelikli</span>
+                                    <% } %>
+                                    <small class="text-muted d-block">
+                                        <%= new Date(announcement.date).toLocaleDateString('tr-TR') %>
+                                    </small>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Yaklaşan Özel Günler</h5>
+                        <ul class="list-group">
+                            <% upcomingSpecialDays.forEach(function(day) { %>
+                                <li class="list-group-item">
+                                    <i class="fas <%= day.icon %>" style="color: <%= day.color %>"></i>
+                                    <%= day.name %>
+                                    <small class="text-muted d-block"><%= day.date %></small>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

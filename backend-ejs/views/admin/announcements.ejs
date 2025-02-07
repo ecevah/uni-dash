@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <%- include('../partials/head') %>
+    <title>Duyuru Yönetimi | Uni-Dash</title>
+    <style>
+        .priority-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 0.5rem;
+            border-radius: 0 0.25rem 0 0.25rem;
+        }
+    </style>
+    <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+</head>
+<body>
+    <%- include('../partials/nav') %>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Duyuru Yönetimi</h2>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAnnouncementModal">
+                <i class="fas fa-plus"></i> Yeni Duyuru
+            </button>
+        </div>
+
+        <div class="row">
+            <% announcements.forEach(function(announcement) { %>
+                <div class="col-md-6 mb-4">
+                    <div class="card position-relative">
+                        <% if (announcement.priority) { %>
+                            <div class="priority-badge bg-danger text-white">
+                                <i class="fas fa-exclamation-circle"></i> Öncelikli
+                            </div>
+                        <% } %>
+                        <div class="card-body">
+                            <p class="card-text"><%= announcement.content %></p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <small class="text-muted">
+                                    <%= new Date(announcement.date).toLocaleDateString('tr-TR') %>
+                                </small>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" 
+                                            onclick="editAnnouncement('<%= announcement._id %>', '<%= announcement.content %>', <%= announcement.priority %>, '<%= announcement.date %>')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" 
+                                            onclick="deleteAnnouncement('<%= announcement._id %>')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+
+    <!-- Add Announcement Modal -->
+    <div class="modal fade" id="addAnnouncementModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Yeni Duyuru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addAnnouncementForm">
+                        <div class="mb-3">
+                            <label for="content" class="form-label">Duyuru İçeriği</label>
+                            <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="priority" name="priority">
+                                <label class="form-check-label" for="priority">
+                                    Öncelikli Duyuru
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Tarih</label>
+                            <input type="date" class="form-control" id="date" name="date" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" onclick="addAnnouncement()">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Announcement Modal -->
+    <div class="modal fade" id="editAnnouncementModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Duyuru Düzenle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editAnnouncementForm">
+                        <input type="hidden" id="editId">
+                        <div class="mb-3">
+                            <label for="editContent" class="form-label">Duyuru İçeriği</label>
+                            <textarea class="form-control" id="editContent" name="content" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="editPriority" name="priority">
+                                <label class="form-check-label" for="editPriority">
+                                    Öncelikli Duyuru
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDate" class="form-label">Tarih</label>
+                            <input type="date" class="form-control" id="editDate" name="date" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" onclick="updateAnnouncement()">Güncelle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add new announcement
+        async function addAnnouncement() {
+            const content = document.getElementById('content').value;
+            const priority = document.getElementById('priority').checked;
+            const date = document.getElementById('date').value;
+
+            if (!content || !date) {
+                alert('Lütfen tüm alanları doldurun');
+                return;
+            }
+
+            try {
+                const response = await apiRequest('/api/announcements', {
+                    method: 'POST',
+                    body: JSON.stringify({ 
+                        content, 
+                        priority, 
+                        date: new Date(date).toISOString() 
+                    })
+                });
+
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    const data = await response.json();
+                    if (data.errors) {
+                        const errorMessages = data.errors.map(err => err.msg).join('\n');
+                        alert('Hata:\n' + errorMessages);
+                    } else {
+                        alert('Duyuru eklenirken bir hata oluştu: ' + (data.message || 'Bilinmeyen hata'));
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Duyuru eklenirken bir hata oluştu');
+            }
+        }
+
+        // Edit announcement
+        function editAnnouncement(id, content, priority, date) {
+            document.getElementById('editId').value = id;
+            document.getElementById('editContent').value = content;
+            document.getElementById('editPriority').checked = priority;
+            document.getElementById('editDate').value = new Date(date).toISOString().split('T')[0];
+            
+            new bootstrap.Modal(document.getElementById('editAnnouncementModal')).show();
+        }
+
+        // Update announcement
+        async function updateAnnouncement() {
+            const id = document.getElementById('editId').value;
+            const content = document.getElementById('editContent').value;
+            const priority = document.getElementById('editPriority').checked;
+            const date = document.getElementById('editDate').value;
+
+            try {
+                const response = await apiRequest(`/api/announcements/${id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ content, priority, date })
+                });
+
+                if (response && response.ok) {
+                    location.reload();
+                } else {
+                    alert('Duyuru güncellenirken bir hata oluştu');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Duyuru güncellenirken bir hata oluştu');
+            }
+        }
+
+        // Delete announcement
+        async function deleteAnnouncement(id) {
+            if (confirm('Bu duyuruyu silmek istediğinizden emin misiniz?')) {
+                try {
+                    const response = await apiRequest(`/api/announcements/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response && response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Duyuru silinirken bir hata oluştu');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Duyuru silinirken bir hata oluştu');
+                }
+            }
+        }
+
+        // Set today's date as default for new announcements
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').value = today;
+        });
+    </script>
+</body>
+</html> 

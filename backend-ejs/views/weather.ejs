@@ -1,0 +1,34 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-6 mx-auto">
+      <div class="card">
+        <div class="card-body text-center">
+          <h2 class="card-title mb-4">Hava Durumu</h2>
+          
+          <% if (weather) { %>
+            <div class="weather-icon mb-3">
+              <img src="<%= weather.icon %>" alt="<%= weather.condition %>" style="width: 64px; height: 64px;">
+            </div>
+            <h3 class="temperature"><%= weather.temperature %>°C</h3>
+            <p class="condition"><%= weather.condition %></p>
+            <p class="location"><%= weather.location %></p>
+            <p class="text-muted">
+              <small>Son güncelleme: <%= new Date(weather.timestamp).toLocaleString('tr-TR') %></small>
+            </p>
+          <% } else { %>
+            <p class="text-muted">Hava durumu bilgisi bulunamadı.</p>
+          <% } %>
+        </div>
+      </div>
+      
+      <div class="text-center mt-3">
+        <a href="/api/weather/history" class="btn btn-primary">Geçmiş Veriler</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %> 
