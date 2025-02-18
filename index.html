@@ -8,8 +8,52 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/svg+xml" href="images/logo.svg">
+    <style>
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        body {
+            position: relative;
+            background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), url('images/bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            margin: 0;
+            padding-bottom: 60px;
+        }
+        #nl {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            margin: 0;
+            pointer-events: none;
+        }
+        #nl a, #nl a:hover {
+            text-decoration: none !important;
+            cursor: default !important;
+        }
+        .powered-by {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            padding: 10px 0;
+            color: #FFF;
+            font-size: 0.8rem;
+            font-family: 'Inter', sans-serif;
+            z-index: 999;
+        }
+    </style>
 </head>
 <body>
+    <div id="particles-js"></div>
     <div class="logo-container">
         <a href="https://www.uniteks.com.tr">
             <img src="./images/logo-full.svg" alt="Logo" class="main-logo">
@@ -56,48 +100,29 @@
             </div>
         </div>
 
-        <!-- Orta Bölüm - Uygulamalar ve Duyurular -->
+        <!-- Orta Bölüm - Uygulamalar -->
         <div class="middle-section">
-            <div class="card announcements-card animate-slide-right">
-                <h2><i class="fas fa-bullhorn"></i> Duyurular</h2>
-                <div class="announcement-list" id="announcement-list">
-                    <!-- Duyurular buraya dinamik olarak eklenecek -->
-                </div>
-            </div>
-
             <div class="apps-grid" id="apps-grid">
                 <!-- Siteler buraya dinamik olarak eklenecek -->
             </div>
         </div>
 
-        <!-- Sağ Bölüm - Özel Günler ve Quick Links -->
+        <!-- Sağ Bölüm - Özel Günler ve Duyurular -->
         <div class="right-section">
             <div class="card special-day-card animate-slide-left" id="special-day-container" style="display: none;">
                 <div class="special-day-icon">
                     <i class="fas fa-gift"></i>
                 </div>
                 <div class="special-day-info">
-                    
                     <h3 id="special-day-name"></h3>
                     <span class="date" id="special-day-date"></span>
                 </div>
             </div>
 
-            <div class="card quick-links-card animate-slide-left">
-                <h2><i class="fas fa-link"></i> Hızlı Erişim</h2>
-                <div class="quick-links-list">
-                    <a href="./images/ss2025.pdf" target="_blank" class="quick-link">
-                        <i class="fas fa-file-pdf"></i>
-                        <span>Şirket Politikaları</span>
-                    </a>
-                    <a href="javascript:void(0)" onclick="openPhoneModal()" class="quick-link">
-                        <i class="fas fa-phone"></i>
-                        <span>Dahili Telefon Rehberi</span>
-                    </a>
-                    <a href="#" class="quick-link">
-                        <i class="fas fa-calendar-check"></i>
-                        <span>İzin Talep</span>
-                    </a>
+            <div class="card announcements-card animate-slide-left">
+                <h2><i class="fas fa-bullhorn"></i> Duyurular</h2>
+                <div class="announcement-list" id="announcement-list">
+                    <!-- Duyurular buraya dinamik olarak eklenecek -->
                 </div>
             </div>
         </div>
@@ -147,8 +172,79 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        // Saat ve Tarih Güncelleme
+        particlesJS("particles-js", {
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: "#FF8C00"
+                },
+                shape: {
+                    type: "circle"
+                },
+                opacity: {
+                    value: 0.5,
+                    random: false
+                },
+                size: {
+                    value: 3,
+                    random: true
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#FF8C00",
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 3,
+                    direction: "none",
+                    random: false,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false,
+                    attract: {
+                        enable: false,
+                        rotateX: 600,
+                        rotateY: 1200
+                    }
+                }
+            },
+            interactivity: {
+                detect_on: "window",
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: "repulse"
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: "push"
+                    },
+                    resize: true
+                },
+                modes: {
+                    repulse: {
+                        distance: 80,
+                        duration: 0.4
+                    },
+                    push: {
+                        particles_nb: 4
+                    }
+                }
+            },
+            retina_detect: true
+        });
+
         function updateDateTime() {
             const now = new Date();
             const timeElement = document.getElementById('current-time');
@@ -166,7 +262,7 @@
             dayElement.textContent = days[now.getDay()];
         }
 
-        // Hava durumu ikonlarını FontAwesome ikonlarına çevir
+        
         function getWeatherIcon(code) {
             const icons = {
                 '01d': 'fa-sun',
@@ -191,16 +287,16 @@
             return icons[code] || 'fa-sun';
         }
 
-        // Dashboard verilerini çek ve güncelle
+        
         async function fetchDashboardData() {
             try {
-                const response = await fetch('http://localhost:3000/api/dashboard');
+                const response = await fetch('https://unidash.uniteks.com.tr/api/dashboard');
                 if (!response.ok) {
                     throw new Error('Dashboard verileri alınamadı');
                 }
                 const data = await response.json();
 
-                // Hava durumu güncelle
+                
                 if (data.weather) {
                     document.getElementById('weather-temp').textContent = `${Math.round(data.weather.temperature)}°C`;
                     document.getElementById('weather-location').textContent = data.weather.location;
@@ -208,7 +304,7 @@
                     document.getElementById('weather-icon').innerHTML = `<i class="fas ${getWeatherIcon(data.weather.icon)}"></i>`;
                 }
 
-                // Döviz kurları güncelle
+                
                 if (data.currency) {
                     document.getElementById('usd-try').textContent = data.currency.usdRate.toFixed(4);
                     document.getElementById('eur-try').textContent = data.currency.eurRate.toFixed(4);
@@ -216,7 +312,7 @@
                     updateCurrencyChangeWithValue('eur-try-change', data.currency.eurChange);
                 }
 
-                // Duyuruları güncelle
+                
                 const announcementList = document.getElementById('announcement-list');
                 announcementList.innerHTML = '';
                 if (data.announcements) {
@@ -231,14 +327,14 @@
                     });
                 }
 
-                // Siteleri güncelle
+                
                 const appsGrid = document.getElementById('apps-grid');
                 appsGrid.innerHTML = '';
                 if (data.sites) {
                     data.sites.forEach(site => {
                         const siteHtml = `
                             <a href="${site.link}" target="_blank" rel="noopener noreferrer" class="app-card animate-pop-in" style="text-decoration: none;">
-                                <img src="http://localhost:3000/${site.logo}" alt="${site.name}" style="width: 32px; height: 32px; margin-bottom: 1rem;">
+                                <img src="https://unidash.uniteks.com.tr/${site.logo}" alt="${site.name}" style="width: 32px; height: 32px; margin-bottom: 1rem;">
                                 <h3 style="text-decoration: none;">${site.name}</h3>
                             </a>
                         `;
@@ -246,7 +342,7 @@
                     });
                 }
 
-                // Özel günü güncelle
+                
                 const specialDayContainer = document.getElementById('special-day-container');
                 if (data.specialDay) {
                     document.getElementById('special-day-name').textContent = data.specialDay.name;
@@ -263,7 +359,7 @@
             }
         }
 
-        // Döviz değişim oranlarını güncelle
+        
         function updateCurrencyChangeWithValue(elementId, change) {
             const element = document.getElementById(elementId);
             if (!isNaN(change)) {
@@ -272,7 +368,7 @@
             }
         }
 
-        // Renk tonunu ayarla
+        
         function adjustColor(color, percent) {
             const num = parseInt(color.replace('#', ''), 16),
                 amt = Math.round(2.55 * percent),
@@ -284,43 +380,49 @@
                 (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
         }
 
-        // Telefon rehberi modal fonksiyonları
+        
         function openPhoneModal() {
             document.getElementById('phoneDirectoryModal').style.display = 'block';
-            document.body.style.overflow = 'hidden'; // Arka planı scroll edilemez yap
+            document.body.style.overflow = 'hidden'; 
         }
 
         function closePhoneModal() {
             document.getElementById('phoneDirectoryModal').style.display = 'none';
-            document.body.style.overflow = 'auto'; // Scroll'u geri aç
+            document.body.style.overflow = 'auto';
         }
 
-        // Modal dışına tıklandığında kapat
+        
         document.getElementById('phoneDirectoryModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closePhoneModal();
             }
         });
 
-        // ESC tuşuna basıldığında modalı kapat
+        
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closePhoneModal();
             }
         });
 
-        // Sayfa yüklendiğinde
+        
         document.addEventListener('DOMContentLoaded', () => {
-            // İlk veri yüklemesi
+            
             updateDateTime();
             fetchDashboardData();
 
-            // Saat güncellemesi
+            
             setInterval(updateDateTime, 1000);
 
-            // Dashboard verilerini her 5 dakikada bir güncelle
+            
             setInterval(fetchDashboardData, 5 * 60 * 1000);
         });
     </script>
+    
+    <div class="powered-by">
+        Powered by Uniteks IT Team
+    </div>
+    <script>NekoType="orange"</script>
+    <h1 id=nl><script src="kedi.js"></script></h1>
 </body>
 </html>

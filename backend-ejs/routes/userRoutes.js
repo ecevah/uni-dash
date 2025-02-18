@@ -46,7 +46,7 @@ router.post("/login", async (req, res) => {
 // @desc    Register a new user
 // @route   POST /api/users
 // @access  Private
-router.post("/", protect, async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const { name, surname, username, password } = req.body;
 

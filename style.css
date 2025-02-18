@@ -6,9 +6,16 @@
 }
 
 body {
-    background-color: #f0f5f1;
+    background: url('./images/bg.jpg');
+    background-size: cover;
+    background-position: bottom;
+    background-repeat: no-repeat;
     min-height: 100vh;
     padding: 2rem;
+}
+
+#layerNeko0 {
+    cursor: pointer !important;
 }
 
 .container {
@@ -183,28 +190,30 @@ body {
 }
 
 .app-card {
-    background: white;
+    background: rgba(0, 0, 0, 0.3);
     border-radius: 15px;
     padding: 1.5rem;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 0 2px 15px #161616;
+
 }
 
 .app-card:hover {
     transform: translateY(-5px);
-    background: #f8f9fa;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .app-card i {
     font-size: 2rem;
     margin-bottom: 1rem;
-    color: #2c3e50;
+    color: #FFFFFF;
 }
 
 .app-card h3 {
     font-size: 1rem;
-    color: #2c3e50;
+    color: #FFFFFF;
 }
 
 /* Announcements Card */
