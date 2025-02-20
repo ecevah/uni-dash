@@ -3,6 +3,7 @@ const router = express.Router();
 const Announcement = require("../models/Announcement");
 const SpecialDay = require("../models/SpecialDay");
 const Site = require("../models/Site");
+const Feedback = require("../models/Feedback");
 
 // Admin ana sayfa
 router.get("/", async (req, res) => {
@@ -135,6 +136,39 @@ router.get("/sites", async (req, res) => {
     }
     res.status(500).render("error", {
       message: "Bir hata oluştu",
+      error,
+    });
+  }
+});
+
+// Geri bildirimleri göster
+router.get("/feedbacks", async (req, res) => {
+  try {
+    const feedbacks = await Feedback.find().sort({ createdAt: -1 });
+    const stats = {
+      total: feedbacks.length,
+      likes: feedbacks.filter((f) => f.type === "like").length,
+      dislikes: feedbacks.filter((f) => f.type === "dislike").length,
+    };
+
+    // API isteği ise JSON yanıt döndür
+    if (req.headers.accept && req.headers.accept.includes("application/json")) {
+      return res.json({ feedbacks, stats });
+    }
+
+    // Normal sayfa isteği ise render et
+    res.render("admin/feedbacks", {
+      path: "/admin/feedbacks",
+      feedbacks,
+      stats,
+    });
+  } catch (error) {
+    console.error("Feedbacks page error:", error);
+    if (req.headers.accept && req.headers.accept.includes("application/json")) {
+      return res.status(500).json({ message: "Server error" });
+    }
+    res.status(500).render("error", {
+      message: "Geri bildirimler yüklenirken bir hata oluştu",
       error,
     });
   }

@@ -26,6 +26,7 @@ const currencyRoutes = require("./routes/currencyRoutes");
 const specialDayRoutes = require("./routes/specialDayRoutes");
 const { router: authRoutes } = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const feedbackRouter = require("./routes/feedback");
 
 // Model imports
 const Announcement = require("./models/Announcement");
@@ -126,6 +127,7 @@ app.use("/api/sites", siteRoutes);
 app.use("/api/weather", weatherRoutes);
 app.use("/api/currency", currencyRoutes);
 app.use("/api/special-days", specialDayRoutes);
+app.use("/api/feedback", feedbackRouter);
 
 // Error handling
 app.use((err, req, res, next) => {

@@ -17,14 +17,22 @@
             left: 0;
             z-index: -1;
             background: rgba(255, 255, 255, 0.1);
+            -webkit-transform: translate3d(0,0,0);
         }
         body {
             position: relative;
-            background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), url('images/bg.jpg') no-repeat center center fixed;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), url('images/bg.jpg');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
             background-size: cover;
             min-height: 100vh;
             margin: 0;
             padding-bottom: 60px;
+            -webkit-transform: translate3d(0,0,0);
         }
         #nl {
             position: fixed;
@@ -49,6 +57,155 @@
             font-size: 0.8rem;
             font-family: 'Inter', sans-serif;
             z-index: 999;
+        }
+        .app-card {
+            background: rgba(0, 0, 0, 0.1) !important;
+            -webkit-backdrop-filter: blur(2px);
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            -webkit-transform: translate3d(0,0,0);
+        }
+        .app-card:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+            transform: translateY(-5px);
+            -webkit-transform: translateY(-5px);
+        }
+        .app-card img {
+            mix-blend-mode: multiply;
+            filter: contrast(1.1);
+            -webkit-filter: contrast(1.1);
+            transition: all 0.3s ease;
+        }
+        .app-card:hover img {
+            transform: scale(1.1);
+            -webkit-transform: scale(1.1);
+        }
+        .feedback-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #FF8C00;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            animation: bounce 2s infinite;
+            z-index: 1000;
+        }
+
+        .feedback-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+        }
+
+        .feedback-tooltip {
+            position: absolute;
+            right: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .feedback-button:hover .feedback-tooltip {
+            opacity: 1;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .feedback-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1001;
+        }
+
+        .feedback-modal-content {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .feedback-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .feedback-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .like-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .dislike-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .feedback-textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: vertical;
+            min-height: 100px;
+            display: none;
+        }
+
+        .feedback-submit {
+            background: #2196F3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right;
+            display: none;
         }
     </style>
 </head>
@@ -169,6 +326,30 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+    </div>
+
+    <button class="feedback-button">
+        <i class="fas fa-comment"></i>
+        <span class="feedback-tooltip">Site hakkındaki yorumlarınızı paylaşın</span>
+    </button>
+
+    <div class="feedback-modal">
+        <div class="feedback-modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0;">Geri Bildirim</h3>
+                <button onclick="closeFeedbackModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+            <div class="feedback-buttons">
+                <button class="feedback-btn like-btn" onclick="selectFeedback('like')">
+                    <i class="fas fa-thumbs-up"></i> Beğendim
+                </button>
+                <button class="feedback-btn dislike-btn" onclick="selectFeedback('dislike')">
+                    <i class="fas fa-thumbs-down"></i> Beğenmedim
+                </button>
+            </div>
+            <textarea class="feedback-textarea" placeholder="Neden beğenmediğinizi bizimle paylaşır mısınız? (İsteğe bağlı)"></textarea>
+            <button class="feedback-submit" onclick="submitFeedback()">Gönder</button>
         </div>
     </div>
 
@@ -416,6 +597,77 @@
 
             
             setInterval(fetchDashboardData, 5 * 60 * 1000);
+        });
+
+        let selectedFeedbackType = null;
+
+        function openFeedbackModal() {
+            document.querySelector('.feedback-modal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeFeedbackModal() {
+            document.querySelector('.feedback-modal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetFeedbackForm();
+        }
+
+        function selectFeedback(type) {
+            selectedFeedbackType = type;
+            const textarea = document.querySelector('.feedback-textarea');
+            const submitBtn = document.querySelector('.feedback-submit');
+            
+            if (type === 'dislike') {
+                textarea.style.display = 'block';
+            } else {
+                textarea.style.display = 'none';
+                textarea.value = '';
+            }
+            
+            submitBtn.style.display = 'block';
+        }
+
+        async function submitFeedback() {
+            if (!selectedFeedbackType) return;
+
+            const description = document.querySelector('.feedback-textarea').value;
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/feedback', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        type: selectedFeedbackType,
+                        description: description
+                    })
+                });
+
+                if (response.ok) {
+                    alert('Geri bildiriminiz için teşekkür ederiz!');
+                    closeFeedbackModal();
+                } else {
+                    alert('Bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
+                }
+            } catch (error) {
+                console.error('Feedback gönderilirken hata:', error);
+                alert('Bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
+            }
+        }
+
+        function resetFeedbackForm() {
+            selectedFeedbackType = null;
+            document.querySelector('.feedback-textarea').style.display = 'none';
+            document.querySelector('.feedback-textarea').value = '';
+            document.querySelector('.feedback-submit').style.display = 'none';
+        }
+
+        document.querySelector('.feedback-button').addEventListener('click', openFeedbackModal);
+        document.querySelector('.feedback-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeFeedbackModal();
+            }
         });
     </script>
     

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <%- include('../partials/head') %>
+    <title>Geri Bildirim Yönetimi | Uni-Dash</title>
+    <style>
+        .card {
+            box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+            margin-bottom: 1rem;
+        }
+        .card-stats {
+            transition: transform 0.2s ease;
+        }
+        .card-stats:hover {
+            transform: translateY(-3px);
+        }
+        .stats-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .stats-number {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .table-card {
+            background: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+        }
+        .table-card .card-header {
+            border-bottom: 1px solid rgba(0,0,0,.125);
+            padding: 1rem;
+            background: transparent;
+        }
+        .table-card .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        #feedbackTable {
+            margin: 0;
+        }
+        #feedbackTable thead th {
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+            padding: 0.75rem;
+            vertical-align: middle;
+        }
+        #feedbackTable tbody td {
+            padding: 1rem 0.75rem;
+            vertical-align: middle;
+        }
+        .feedback-date {
+            font-size: 0.9rem;
+            color: #6c757d;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .feedback-type {
+            text-align: center;
+        }
+        .feedback-badge {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-radius: 0.375rem;
+        }
+        .feedback-badge i {
+            font-size: 1rem;
+        }
+        .feedback-description {
+            padding: 0.5rem 0;
+            color: #333;
+            line-height: 1.5;
+            min-height: 24px;
+        }
+        .feedback-description.empty {
+            color: #6c757d;
+            font-style: italic;
+        }
+        .dataTables_wrapper .dataTables_length, 
+        .dataTables_wrapper .dataTables_filter {
+            margin-bottom: 1rem;
+        }
+        .dataTables_wrapper .dataTables_info, 
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 1rem;
+            padding: 0.5rem;
+        }
+    </style>
+    <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+</head>
+<body>
+    <%- include('../partials/nav') %>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Geri Bildirim Yönetimi</h2>
+        </div>
+
+        <!-- İstatistik Kartları -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card card-stats">
+                    <div class="card-body text-center">
+                        <div class="stats-icon text-primary">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="stats-number"><%= stats.total %></div>
+                        <div class="stats-title">Toplam Geri Bildirim</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-stats">
+                    <div class="card-body text-center">
+                        <div class="stats-icon text-success">
+                            <i class="fas fa-thumbs-up"></i>
+                        </div>
+                        <div class="stats-number"><%= stats.likes %></div>
+                        <div class="stats-title">Beğeniler</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-stats">
+                    <div class="card-body text-center">
+                        <div class="stats-icon text-danger">
+                            <i class="fas fa-thumbs-down"></i>
+                        </div>
+                        <div class="stats-number"><%= stats.dislikes %></div>
+                        <div class="stats-title">Beğenmeyenler</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Geri Bildirim Tablosu -->
+        <div class="table-card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table id="feedbackTable" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width: 200px">Tarih</th>
+                                <th style="width: 150px">Tür</th>
+                                <th>Açıklama</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% feedbacks.forEach(feedback => { %>
+                                <tr>
+                                    <td>
+                                        <div class="feedback-date">
+                                            <i class="far fa-calendar-alt"></i>
+                                            <%= new Date(feedback.createdAt).toLocaleString('tr-TR', {
+                                                year: 'numeric',
+                                                month: 'long',
+                                                day: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            }) %>
+                                        </div>
+                                    </td>
+                                    <td class="feedback-type">
+                                        <% if (feedback.type === 'like') { %>
+                                            <span class="feedback-badge bg-success text-white">
+                                                <i class="fas fa-thumbs-up"></i>
+                                                Beğendi
+                                            </span>
+                                        <% } else { %>
+                                            <span class="feedback-badge bg-danger text-white">
+                                                <i class="fas fa-thumbs-down"></i>
+                                                Beğenmedi
+                                            </span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <div class="feedback-description <%= !feedback.description ? 'empty' : '' %>">
+                                            <%= feedback.description || 'Açıklama yok' %>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function() {
+                $('#feedbackTable').DataTable({
+                    "responsive": true,
+                    "lengthChange": true,
+                    "autoWidth": false,
+                    "pageLength": 25,
+                    "order": [[0, "desc"]],
+                    "language": {
+                        "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Turkish.json"
+                    },
+                    "dom": '<"d-flex justify-content-between align-items-center mb-3"lf>rtip',
+                    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Tümü"]],
+                });
+            });
+        </script>
+    </div>
+</body>
+</html> 
